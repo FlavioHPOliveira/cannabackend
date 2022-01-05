@@ -12,6 +12,11 @@ const io=socket(server);
 io.on('connect', function(socket){
 
   console.log('un cliente se conecto'+ ' ' +socket.id);
-  
 
-})
+  socket.on('message', function(message){
+    console.log(message)
+  })
+
+
+
+});

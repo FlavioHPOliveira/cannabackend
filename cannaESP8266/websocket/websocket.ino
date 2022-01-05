@@ -17,7 +17,10 @@
 
 const char* ssid = "2G_Netvirtua80"; //Enter SSID
 const char* password = "34424595"; //Enter Password
-const char* websockets_server_host = "192.168.0.1"; //Enter server adress
+const char* websockets_server_host = "192.168.0.213"; //Enter server adress
+
+//const char* websockets_connection_string = "ws://localhost:3000"; //Enter server adress
+
 const uint16_t websockets_server_port = 3000; // Enter server port
 
 using namespace websockets;
@@ -43,6 +46,7 @@ void setup() {
     Serial.println("Connected to Wifi, Connecting to server.");
     // try to connect to Websockets server
     bool connected = client.connect(websockets_server_host, websockets_server_port, "/");
+    //bool connected = client.connect(websockets_connection_string);
     if(connected) {
         Serial.println("Connecetd!");
         client.send("Hello Server");

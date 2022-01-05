@@ -14,18 +14,29 @@
 
 #include <ArduinoWebsockets.h>
 #include <ESP8266WiFi.h>
+#include <DHT.h>
+#include <string>
 
+
+/* Wifi connection */
 const char* ssid = "2G_Netvirtua80"; //Enter SSID
 const char* password = "34424595"; //Enter Password
+
+/*Web Socket*/
 const char* websockets_server_host = "192.168.0.213"; //Enter server adress
-
-//const char* websockets_connection_string = "ws://localhost:3000"; //Enter server adress
-
 const uint16_t websockets_server_port = 3000; // Enter server port
-
 using namespace websockets;
-
 WebsocketsClient client;
+
+/*Sensors*/
+#define DHTPIN 5             // Digital pin connected to the DHT sensor. Code = 5, ESP8266 D1.
+#define DHTTYPE DHT22        // DHT 22 (AM2302)
+DHT dht(DHTPIN, DHTTYPE);
+int soilPIN  = A0;           //Connect the soilMoisture output to analogue pin 1.
+//DEFINE the VARIABLES for AIR and water to calibrate the soil mositure sensor
+const int aire = 786;
+const int agua = 377;       
+
 void setup() {
     Serial.begin(115200);
     // Connect to wifi
@@ -58,13 +69,28 @@ void setup() {
     client.onMessage([&](WebsocketsMessage message) {
         Serial.print("Got Message: ");
         Serial.println(message.data());
+
+      // Ligamos/Desligamos o led de acordo com o comando
+        if(message.data().equalsIgnoreCase("ON"))
+            //digitalWrite(led, HIGH);
+            Serial.println("Turn on!");
+        else
+        if(message.data().equalsIgnoreCase("OFF"))
+            //digitalWrite(led, LOW);
+            Serial.println("Turn Off!");
+        
     });
+
+    /*Initialize temperature and humidity sensor.*/
+    dht.begin();
 }
 
 void loop() {
     // let the websockets client check for incoming messages
     if(client.available()) {
         client.poll();
+        String dht_temperature = String(dht.readTemperature());
+        client.send(dht_temperature);
     }
-    delay(500);
+    delay(1000);
 }

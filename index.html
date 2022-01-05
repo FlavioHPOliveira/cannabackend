@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Socket Thing1</title>
+    <p id="temperature">10</p>
 </head>
 <body>
     Client1
@@ -21,6 +22,9 @@
     // Listen for messages
     socket.addEventListener('message', function (event) {
         console.log('Message from server ', event.data);
+        console.log(document.getElementById("temperature").innerHTML)
+        document.getElementById("temperature").innerHTML = event.data;
+
     });
 
     const sendMessage = () => {

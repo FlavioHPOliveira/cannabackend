@@ -13,7 +13,9 @@
 */
 
 #include <ArduinoWebsockets.h>
-#include <ArduinoJson.h>
+//JSON main library
+//https://github.com/arduino-libraries/Arduino_JSON/blob/master/examples/JSONObject/JSONObject.ino
+#include <Arduino_JSON.h>
 #include <ESP8266WiFi.h>
 #include <DHT.h>
 #include <string>
@@ -78,22 +80,28 @@ void setup() {
         Serial.print("Got Message: ");
         Serial.println(message.data());
 
-      // Ligamos/Desligamos o led de acordo com o comando
-//        if(message.data().equalsIgnoreCase("ON")){
-//            //digitalWrite(led, HIGH);
-//            // but actually the LED is on; this is because
-//            // it is active low on the ESP-01)
-//            digitalWrite(LED_BUILTIN, LOW);   // Turn the LED on (Note that LOW is the voltage level
-//            Serial.println("Turned on!");
-//        }
-//            
-//        if(message.data().equalsIgnoreCase("OFF")){
-//            //digitalWrite(led, LOW);
-//            digitalWrite(LED_BUILTIN, HIGH);  // Turn the LED off by making the voltage HIGH
-//            Serial.println("Turned Off!");
-//        }
+        JSONVar controlInfo = JSON.parse(message.data());
+        if (JSON.typeof(controlInfo) == "undefined") {
+          Serial.println("Parsing input failed!");
+          return;
+        }
+
+        //atoi doesnt work to convert from JSONVar to INT!!! becareful, in tthe other board it used to work....
+        //int value = atoi(controlInfo[keys[1]]);        
+
+        if( (int) controlInfo["OnOff"] == 1 ){
+          Serial.println("turn lights ON");
+          pinMode(4, OUTPUT);
+          digitalWrite(4, LOW);
+        }
+        else if( (int) controlInfo["OnOff"] == 0 ){
+          Serial.println("turn lights OFF");
+          pinMode(4, OUTPUT);
+          digitalWrite(4, HIGH);
+        }     
+
         
-    });
+    }); //end of client callback
 
     /*Initialize temperature and humidity sensor.*/
     dht.begin();
@@ -116,7 +124,7 @@ void loop() {
         String sensorJSONConcat = sensorJSONTemperature + "," +sensorJSONAirHumidity + "," + sensorJSONSoilMoisture;
         //char json[] = "{\"sensor\":\"gps\",\"time\":1351824120,\"data\":[48.756080,2.302038]}";
         
-        Serial.println(sensorJSONConcat);
+        //Serial.println(sensorJSONConcat);
         //DynamicJsonDocument doc(1024);
         //doc["temperature"]  = dht_temperature;
         //doc["air_humidity"] = dht_humidity;

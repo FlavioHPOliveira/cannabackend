@@ -10,21 +10,23 @@ wss.on('connection', function connection(ws) {
   ws.send('Welcome New Client!');
  
   ws.on('message', function incoming(message) {
-    //console.log('received: %s', message);
-    ws.send(`Got your message its ${String(message)}`); //is this the same message from who sent it???
+    //console.log('received: %s', message); ///
+    //ws.send(`Got your message its ${String(message)}`); //is this the same message from who sent it??? guess so.
+    //when I click on lightcontrol, this DOES NOT gets to the server, but it DOES GET TO THE BOARD
 
     //broadcast to everyone... in this case, the board and the frontend. both are clients of this websocket.
     wss.clients.forEach(function each(client) {
       if (client !== ws && client.readyState === WebSocket.OPEN) {
-        console.log('inside broadcast %s', message) // this is from all other senders??? prints everything from all clients.
-
-        try{
-          //const sensorData = JSON.parse(message)
-          //console.log(sensorData.temperature, sensorData.airHumidity)
-          client.send(String(message));
-        }catch(e){
-          console.log(e)
-        }
+        console.log('inside broadcast %s', message) // this is from all other senders??? ONLY PRINTS WHEN MORE THAN 1 IS CONNECTED..
+        //when I click on lightcontrol, this message DOES GET TO SERVER, but it DOES NOT GET TO THE BOARD
+        client.send(String(message));
+        // try{
+        //   //const sensorData = JSON.parse(message)
+        //   //console.log(sensorData.temperature, sensorData.airHumidity)
+        //   client.send(String(message));
+        // }catch(e){
+        //   console.log(e)
+        // }
         //const sensorData = JSON.parse(message)
         //console.log(sensorData.temperature, sensorData.airHumidity)
         //client.send(String(message));

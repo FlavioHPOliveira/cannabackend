@@ -38,6 +38,10 @@ const int aire = 786;
 const int agua = 377;       
 
 void setup() {
+
+    // Initialize the LED_BUILTIN pin as an output
+    pinMode(LED_BUILTIN, OUTPUT);     
+  
     Serial.begin(115200);
     // Connect to wifi
     WiFi.begin(ssid, password);
@@ -71,13 +75,19 @@ void setup() {
         Serial.println(message.data());
 
       // Ligamos/Desligamos o led de acordo com o comando
-        if(message.data().equalsIgnoreCase("ON"))
+        if(message.data().equalsIgnoreCase("ON")){
             //digitalWrite(led, HIGH);
+            // but actually the LED is on; this is because
+            // it is active low on the ESP-01)
+            digitalWrite(LED_BUILTIN, LOW);   // Turn the LED on (Note that LOW is the voltage level
             Serial.println("Turned on!");
-        else
-        if(message.data().equalsIgnoreCase("OFF"))
+        }
+            
+        if(message.data().equalsIgnoreCase("OFF")){
             //digitalWrite(led, LOW);
+            digitalWrite(LED_BUILTIN, HIGH);  // Turn the LED off by making the voltage HIGH
             Serial.println("Turned Off!");
+        }
         
     });
 
@@ -94,5 +104,5 @@ void loop() {
     }else {
         Serial.println("Client not available: ");
     }
-    delay(1000);
+    delay(500);
 }

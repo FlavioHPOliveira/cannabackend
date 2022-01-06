@@ -11,6 +11,8 @@
     <button onclick="sendMessage()">Send Msg</button>
     <button onclick="sendMessageON()">ON</button>
     <button onclick="sendMessageOFF()">OFF</button>
+    <input  onclick="sendMessageLight()" type="checkbox" id="controlLight">
+
 </body>
 <script>
     // Create WebSocket connection.
@@ -38,6 +40,14 @@
     }
     const sendMessageOFF = () => {
         socket.send('OFF');
+    }
+    const sendMessageLight = () => {
+
+        const lightCheckbox = document.getElementById("controlLight")
+        //console.log(Number(lightCheckbox.checked))
+        lightControlMessage = `{"control":"light", "OnOff":${Number(lightCheckbox.checked)}}}`
+
+        //socket.send('OFF');
     }
 </script>
 </html>

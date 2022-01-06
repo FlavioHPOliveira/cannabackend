@@ -19,7 +19,7 @@ wss.on('connection', function connection(ws) {
         console.log('inside broadcast %s', message) // this is from all other senders??? prints everything from all clients.
 
         try{
-          const sensorData = JSON.parse(message)
+          //const sensorData = JSON.parse(message)
           //console.log(sensorData.temperature, sensorData.airHumidity)
           client.send(String(message));
         }catch(e){

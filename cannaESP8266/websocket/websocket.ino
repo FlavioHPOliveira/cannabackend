@@ -73,11 +73,11 @@ void setup() {
       // Ligamos/Desligamos o led de acordo com o comando
         if(message.data().equalsIgnoreCase("ON"))
             //digitalWrite(led, HIGH);
-            Serial.println("Turn on!");
+            Serial.println("Turned on!");
         else
         if(message.data().equalsIgnoreCase("OFF"))
             //digitalWrite(led, LOW);
-            Serial.println("Turn Off!");
+            Serial.println("Turned Off!");
         
     });
 
@@ -91,6 +91,8 @@ void loop() {
         client.poll();
         String dht_temperature = String(dht.readTemperature());
         client.send(dht_temperature);
+    }else {
+        Serial.println("Client not available: ");
     }
     delay(1000);
 }

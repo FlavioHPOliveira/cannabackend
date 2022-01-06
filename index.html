@@ -9,6 +9,8 @@
 <body>
     Client1
     <button onclick="sendMessage()">Send Msg</button>
+    <button onclick="sendOn()">ON</button>
+    <button onclick="sendOff()">OFF</button>
 </body>
 <script>
     // Create WebSocket connection.
@@ -29,6 +31,13 @@
 
     const sendMessage = () => {
         socket.send('Hello From Client1!');
+    }
+
+    const sendMessageON = () => {
+        socket.send('ON');
+    }
+    const sendMessageOFF = () => {
+        socket.send('OFF');
     }
 </script>
 </html>

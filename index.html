@@ -11,7 +11,7 @@
     <button onclick="sendMessage()">Send Msg</button>
     <button onclick="sendMessageON()">ON</button>
     <button onclick="sendMessageOFF()">OFF</button>
-    <input  onclick="sendMessageLight()" type="checkbox" id="controlLight">
+    <input  onclick="sendMessageLight()" type="checkbox" id="controlLight">Light check</input>
 
 </body>
 <script>
@@ -44,10 +44,10 @@
     const sendMessageLight = () => {
 
         const lightCheckbox = document.getElementById("controlLight")
-        //console.log(Number(lightCheckbox.checked))
-        lightControlMessage = `{"control":"light", "OnOff":${Number(lightCheckbox.checked)}}}`
+        console.log('clicked checkbox',Number(lightCheckbox.checked))
+        const lightControlMessage = `{"control":"light", "OnOff":${Number(lightCheckbox.checked)}}`
 
-        //socket.send('OFF');
+        socket.send(lightControlMessage);
     }
 </script>
 </html>

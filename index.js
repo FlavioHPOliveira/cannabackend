@@ -10,13 +10,17 @@ wss.on('connection', function connection(ws) {
   ws.send('Welcome New Client!');
  
   ws.on('message', function incoming(message) {
-    console.log('received: %s', message);
+    //console.log('received: %s', message);
     ws.send(`Got your message its ${String(message)}`); //is this the same message from who sent it???
 
     //broadcast to everyone... in this case, the board and the frontend. both are clients of this websocket.
     wss.clients.forEach(function each(client) {
       if (client !== ws && client.readyState === WebSocket.OPEN) {
-        console.log('inside broadcast %s', message) // this is from all other senders???
+        console.log('inside broadcast %s', message) // this is from all other senders??? prints everything from all clients.
+
+        const sensorData = JSON.parse(message)
+        console.log(sensorData.temperature, sensorData.airHumidity)
+
         client.send(String(message));
       }
     });

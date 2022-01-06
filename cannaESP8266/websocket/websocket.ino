@@ -13,6 +13,7 @@
 */
 
 #include <ArduinoWebsockets.h>
+#include <ArduinoJson.h>
 #include <ESP8266WiFi.h>
 #include <DHT.h>
 #include <string>
@@ -35,12 +36,15 @@ DHT dht(DHTPIN, DHTTYPE);
 int soilPIN  = A0;           //Connect the soilMoisture output to analogue pin 1.
 //DEFINE the VARIABLES for AIR and water to calibrate the soil mositure sensor
 const int aire = 786;
-const int agua = 377;       
+const int agua = 377;
+
+/*Flag to send sensor data, only sends data when user is accessing the board control page*/
+int flagSendSensor = 0;
 
 void setup() {
 
-    // Initialize the LED_BUILTIN pin as an output
-    pinMode(LED_BUILTIN, OUTPUT);     
+    // TESTING signals with led Initialize the LED_BUILTIN pin as an output.
+    //pinMode(LED_BUILTIN, OUTPUT);     
   
     Serial.begin(115200);
     // Connect to wifi
@@ -75,19 +79,19 @@ void setup() {
         Serial.println(message.data());
 
       // Ligamos/Desligamos o led de acordo com o comando
-        if(message.data().equalsIgnoreCase("ON")){
-            //digitalWrite(led, HIGH);
-            // but actually the LED is on; this is because
-            // it is active low on the ESP-01)
-            digitalWrite(LED_BUILTIN, LOW);   // Turn the LED on (Note that LOW is the voltage level
-            Serial.println("Turned on!");
-        }
-            
-        if(message.data().equalsIgnoreCase("OFF")){
-            //digitalWrite(led, LOW);
-            digitalWrite(LED_BUILTIN, HIGH);  // Turn the LED off by making the voltage HIGH
-            Serial.println("Turned Off!");
-        }
+//        if(message.data().equalsIgnoreCase("ON")){
+//            //digitalWrite(led, HIGH);
+//            // but actually the LED is on; this is because
+//            // it is active low on the ESP-01)
+//            digitalWrite(LED_BUILTIN, LOW);   // Turn the LED on (Note that LOW is the voltage level
+//            Serial.println("Turned on!");
+//        }
+//            
+//        if(message.data().equalsIgnoreCase("OFF")){
+//            //digitalWrite(led, LOW);
+//            digitalWrite(LED_BUILTIN, HIGH);  // Turn the LED off by making the voltage HIGH
+//            Serial.println("Turned Off!");
+//        }
         
     });
 
@@ -99,8 +103,27 @@ void loop() {
     // let the websockets client check for incoming messages
     if(client.available()) {
         client.poll();
-        String dht_temperature = String(dht.readTemperature());
-        client.send(dht_temperature);
+        String temperature = String(dht.readTemperature());
+        String airHumidity    = String(dht.readHumidity());
+ 
+        int soilMoistureInt = map(analogRead(soilPIN), aire, agua, 0, 100);
+        String soilMoistureString = String(soilMoistureInt);
+  
+        String sensorJSONTemperature = "{\"temperature\":"+temperature+"";
+        String sensorJSONAirHumidity = "\"airHumidity\":"+airHumidity+"";
+        String sensorJSONSoilMoisture = "\"soilMoisture\":"+soilMoistureString+"}";
+        
+        String sensorJSONConcat = sensorJSONTemperature + "," +sensorJSONAirHumidity + "," + sensorJSONSoilMoisture;
+        //char json[] = "{\"sensor\":\"gps\",\"time\":1351824120,\"data\":[48.756080,2.302038]}";
+        
+        Serial.println(sensorJSONConcat);
+        //DynamicJsonDocument doc(1024);
+        //doc["temperature"]  = dht_temperature;
+        //doc["air_humidity"] = dht_humidity;
+        //String sensorSerialized = doc;
+        //deserializeJson(doc, json);
+        
+        client.send(sensorJSONConcat);
     }else {
         Serial.println("Client not available: ");
     }

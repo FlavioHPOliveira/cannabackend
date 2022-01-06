@@ -18,10 +18,16 @@ wss.on('connection', function connection(ws) {
       if (client !== ws && client.readyState === WebSocket.OPEN) {
         console.log('inside broadcast %s', message) // this is from all other senders??? prints everything from all clients.
 
-        const sensorData = JSON.parse(message)
-        console.log(sensorData.temperature, sensorData.airHumidity)
-
-        client.send(String(message));
+        try{
+          const sensorData = JSON.parse(message)
+          //console.log(sensorData.temperature, sensorData.airHumidity)
+          client.send(String(message));
+        }catch(e){
+          console.log(e)
+        }
+        //const sensorData = JSON.parse(message)
+        //console.log(sensorData.temperature, sensorData.airHumidity)
+        //client.send(String(message));
       }
     });
     

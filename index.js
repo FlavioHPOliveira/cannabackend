@@ -56,4 +56,4 @@ wss.on('connection', function connection(ws, req) {
 
 app.get('/', (req, res) => res.send('Hello World!'))
 
-server.listen(process.env.PORT || 3000, () => console.log(`Lisening on port :3000`))
+server.listen(process.env.PORT || 3000, () => console.log(`Lisening on port :3000 OR ${process.env.PORT}`))
